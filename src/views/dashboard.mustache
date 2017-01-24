@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
+    <style>
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        padding: 10px;
+        font-size: 24px;
+        font-family: sans-serif;
+        display: flex;
+        align-items: center;
+      }
+      li img {
+        margin-right: 20px;
+      }
+      .stop {
+        background-color: #E98686;
+      }
+      .slow {
+        background-color: #E9DB86;
+      }
+      .go {
+        background-color: #B8E986;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{{ class.name }}</h1>
+    <h2>Students:</h2>
+    <ul>
+      {{#statuses}}
+      <li class="{{ name }}" data-id="{{ user.oauthID }}">
+        <img src="{{ user.avatarURL }}" width="40" height="40" />
+        <span>{{ user.fullName }}</span>
+      </li>
+      {{/statuses}}
+    </ul>
+    <script type="text/javascript">
+      var socket = io('/adminUpdates');
+
+      //Initialize datasets for html attrs.
+      document.querySelectorAll('li').forEach((li) => {
+        li.dataset.id = li.attributes['data-id'].value;
+      })
+
+      var $li = document.createElement('li');
+      var $ul = document.querySelector('ul');
+
+      function buildStudentMarkup(student) {
+        return '<img src="' + student.avatarURL +'" width="40" height="40" />' +
+          '<span>' + student.fullName + '</span>';
+      }
+
+      function renderStudent(student) {
+        var existingStudent;
+        document.querySelectorAll('li')
+          .forEach((li) => {
+            if (li.dataset.id === student.oauthID) {
+              existingStudent = li;
+            }
+          })
+        if (existingStudent) {
+          existingStudent.className = student.status;
+        } else {
+          var $studentNode = $li.cloneNode();
+          $studentNode.dataset.id = student.oauthID;
+          $studentNode.innerHTML = buildStudentMarkup(student);
+          $studentNode.className = student.status;
+          $ul.appendChild($studentNode);
+        }
+      }
+
+      socket.on('statusUpdate', function (student) {
+        if (student.slug === "{{ class.slug }}") {
+          renderStudent(student);
+        } else {
+          console.log('different class');
+        }
+      })
+    </script>
+  </body>
+</html>

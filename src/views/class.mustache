@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
+    <style>
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      button {
+        -webkit-appearance: none;
+        border: 1px solid rgba(0,0,0,.3);
+        font-size: 20px;
+        width: 200px;
+        padding: 10px;
+      }
+      .stop {
+        background-color: #E98686;
+      }
+      .slow {
+        background-color: #E9DB86;
+      }
+      .go {
+        background-color: #B8E986;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome {{ fullName }}</h1>
+    <h2>{{ class.name }}</h2>
+    <p>At any time, please choose how you are feeling</p>
+    <ul>
+      <li>
+        <button class="stop">I'm Stuck.</button>
+      </li>
+      <li>
+        <button class="slow">Going Slowly.</button></li>
+      <li>
+        <button class="go">I'm doing it!</button></li>
+      </li>
+    </ul>
+    <script type="text/javascript">
+      var socket = io();
+      var slug = "{{ class.slug }}";
+      function _onClick(status, e) {
+        socket.emit('status', { status: status, slug: slug });
+      }
+      ['stop', 'slow', 'go'].forEach((status) => {
+        var onClick = (e) => {
+          e.preventDefault();
+          _onClick(status)
+        }
+        document
+          .querySelector('.' + status)
+          .addEventListener('click', onClick);
+      })
+    </script>
+  </body>
+</html>
