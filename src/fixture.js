@@ -7,7 +7,7 @@ Promise.all([
   })
   models.workshop.findOrCreate({
     name: 'Sample Workshop',
-    slug: 'sample-workshop'
+    slug: 'sample-workdddshop'
   })
 ]).then(() => {
   console.log('Made Workshops.')
