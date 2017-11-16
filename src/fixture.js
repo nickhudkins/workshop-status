@@ -2,7 +2,7 @@ import { models } from './db';
 
 Promise.all([
   models.workshop.findOrCreate({
-    name: 'Test Workshop',
+    name: 'Test Workshopppp',
     slug: 'test-workshop'
   })
   models.workshop.findOrCreate({
